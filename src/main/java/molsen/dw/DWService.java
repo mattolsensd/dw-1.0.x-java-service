@@ -32,5 +32,6 @@ public class DWService extends Application<MyConfig> {
         //Client jerseyClient = new JerseyClientBuilder(env).using(config.jerseyClient).build(getName());
 
         env.jersey().register(new MyResource());
+        env.jersey().register(new FuturesResource());
     }
 }
