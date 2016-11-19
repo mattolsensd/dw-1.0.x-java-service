@@ -11,81 +11,67 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Future;
 
 @Path("test/futures")
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class FuturesResource {
 
+    // Block with .get and return result
+
     @GET
     @Path("get/success")
     public ApiResponse<String> testGetSuccess() throws Exception {
-        Future<String> future = CompletableFuture.completedFuture("Hello World");
+        CompletableFuture<String> future = CompletableFuture.completedFuture("Hello World");
         return ApiResponse.ok(future.get());
     }
 
     @GET
     @Path("get/failure")
     public ApiResponse<String> testGetFailure() throws Exception {
-        Future<String> future = new CompletableFuture<>();
+        CompletableFuture<String> future = new CompletableFuture<>();
         future.completeExceptionally(new WebApplicationException("BOOM"));
         return ApiResponse.ok(future.get());
     }
 
+    // Return CompletableFuture
+
     @GET
     @Path("return/success")
-    public Future<ApiResponse<String>> testSyncSuccess() throws Exception {
-        return CompletableFuture.completedFuture(ApiResponse.ok("Hello World"));
+    public CompletableFuture<ApiResponse<String>> testReturnFutureSuccess() throws Exception {
+        CompletableFuture<String> future = CompletableFuture.completedFuture("Hello World");
+        return future.thenApply(ApiResponse::ok);
     }
 
     @GET
     @Path("return/failure")
-    public Future<ApiResponse<String>> testSyncFailure() throws Exception {
-        Future<String> future = new CompletableFuture<>();
+    public CompletableFuture<ApiResponse<String>> testReturnFutureFailure() throws Exception {
+        CompletableFuture<String> future = new CompletableFuture<>();
         future.completeExceptionally(new WebApplicationException("BOOM"));
-        return future.map(v = > ApiResponse.ok(v));
+        return future.thenApply(ApiResponse::ok);
     }
 
-    @GET
-    @Path("try-and-return/success")
-    public ApiResponse<String> testTryAndReturnSuccess() throws Exception {
-        try {
-            return CompletableFuture.completedFuture(ApiResponse.ok("Hello World")).get();
-        } catch (Exception e) {
-            return ApiResponse.failed(new ApiError(ApiError.UNKNOWN, e.getMessage()));
-        }
-    }
+    // Error Handling
 
     @GET
-    @Path("try-and-return/failure")
+    @Path("try-and-return")
     public ApiResponse<String> testTryAndReturnFailure() throws Exception {
         try {
-            Future<String> future = new CompletableFuture<>();
+            CompletableFuture<ApiResponse<String>> future = new CompletableFuture<>();
             future.completeExceptionally(new WebApplicationException("BOOM"));
-            future.get();
+            return future.get();
         } catch (Exception e) {
             return ApiResponse.failed(new ApiError(ApiError.UNKNOWN, e.getMessage()));
         }
     }
 
     @GET
-    @Path("try-and-throw/success")
-    public ApiResponse<String> testTryAndThrowSuccess() throws Exception {
-        try {
-            return CompletableFuture.completedFuture(ApiResponse.ok("Hello World")).get();
-        } catch (Exception e) {
-            throw new InternalServerErrorException("My future failed!", e);
-        }
-    }
-
-    @GET
-    @Path("try-and-throw/failure")
+    @Path("try-and-throw")
     public ApiResponse<String> testTryAndThrowFailure() throws Exception {
         try {
-            Future<String> future = new CompletableFuture<>();
+            CompletableFuture<ApiResponse<String>> future = new CompletableFuture<>();
             future.completeExceptionally(new WebApplicationException("BOOM"));
-            future.get();
+            return future.get();
         } catch (Exception e) {
             throw new InternalServerErrorException("My future failed!", e);
         }
