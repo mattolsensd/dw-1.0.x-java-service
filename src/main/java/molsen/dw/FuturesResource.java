@@ -1,16 +1,18 @@
 package molsen.dw;
 
-import com.porch.commons.response.ApiError;
 import com.porch.commons.response.ApiResponse;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.util.concurrent.CompletableFuture;
+
+
+// TEST VARIOUS METHODS OF HANDLING OF FUTURES IN A RESOURCE
+
 
 @Path("test/futures")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -49,32 +51,6 @@ public class FuturesResource {
         CompletableFuture<String> future = new CompletableFuture<>();
         future.completeExceptionally(new WebApplicationException("BOOM"));
         return future.thenApply(ApiResponse::ok);
-    }
-
-    // Error Handling
-
-    @GET
-    @Path("try-and-return")
-    public ApiResponse<String> testTryAndReturnFailure() throws Exception {
-        try {
-            CompletableFuture<ApiResponse<String>> future = new CompletableFuture<>();
-            future.completeExceptionally(new WebApplicationException("BOOM"));
-            return future.get();
-        } catch (Exception e) {
-            return ApiResponse.failed(new ApiError(ApiError.UNKNOWN, e.getMessage()));
-        }
-    }
-
-    @GET
-    @Path("try-and-throw")
-    public ApiResponse<String> testTryAndThrowFailure() throws Exception {
-        try {
-            CompletableFuture<ApiResponse<String>> future = new CompletableFuture<>();
-            future.completeExceptionally(new WebApplicationException("BOOM"));
-            return future.get();
-        } catch (Exception e) {
-            throw new InternalServerErrorException("My future failed!", e);
-        }
     }
 
 }
