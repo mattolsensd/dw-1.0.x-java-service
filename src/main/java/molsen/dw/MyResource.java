@@ -24,7 +24,22 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class MyResource {
 
-    private List<ValidationError> validationErrors = Lists.newArrayList(
+    public static final String MY_STRING = "Hello Test";
+
+    public static final MyDTO MY_DTO = new MyDTO(1L, "Thing1");
+
+    public static final String MY_BAD_REQUEST_MESSAGE = "The server cannot or will not process the request due to an apparent client error (e.g., malformed request syntax, too large size, invalid request message framing, or deceptive request routing).";
+    public static final String MY_CONFLICT_MESSAGE = "Indicates that the request could not be processed because of conflict in the request, such as an edit conflict between multiple simultaneous updates.";
+    public static final String MY_FORBIDDEN_MESSAGE = "The request was valid, but the server is refusing action. The user might not have the necessary permissions for a resource.";
+    public static final String MY_NOT_FOUND_MESSAGE = "The requested resource could not be found but may be available in the future. Subsequent requests by the client are permissible.";
+    public static final String MY_UNAUTHORIZED_MESSAGE = "Similar to 403 Forbidden, but specifically for use when authentication is required and has failed or has not yet been provided.";
+    public static final String MY_ISE_MESSAGE = "A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.";
+    public static final String MY_WAE_MESSAGE = "Throwing a WebApplicationException will also result in a server error response";
+
+    // Validation Errors are a special form of badRequest response
+    public static final String MY_VALIDATION_ERROR_MESSAGE = "Request validation failed";
+
+    public static final List<ValidationError> MY_VALIDATION_ERRORS = Lists.newArrayList(
             new ValidationError("id", "id is required"),
             new ValidationError("name", "That's a crap name")
     );
@@ -34,13 +49,13 @@ public class MyResource {
     @GET
     @Path("success/string")
     public ApiResponse<String> respondWithString() {
-        return ApiResponse.ok("Hello Test");
+        return ApiResponse.ok(MY_STRING);
     }
 
     @GET
     @Path("success/dto")
     public ApiResponse<MyDTO> respondWithDto() {
-        return ApiResponse.ok(new MyDTO(1L, "Thing1"));
+        return ApiResponse.ok(MY_DTO);
     }
 
     // FAIL
@@ -48,43 +63,49 @@ public class MyResource {
     @GET
     @Path("failure/bad-request")
     public ApiResponse<MyDTO> respondBadRequest() {
-        return ApiResponse.failed(ApiError.BAD_REQUEST);
+        return ApiResponse.failed(ApiError.BAD_REQUEST, MY_BAD_REQUEST_MESSAGE);
     }
 
     @GET
     @Path("failure/conflict")
     public ApiResponse<MyDTO> respondConflict() {
-        return ApiResponse.failed(ApiError.CONFLICT);
+        return ApiResponse.failed(ApiError.CONFLICT, MY_CONFLICT_MESSAGE);
     }
 
     @GET
     @Path("failure/forbidden")
     public ApiResponse<MyDTO> respondForbidden() {
-        return ApiResponse.failed(ApiError.FORBIDDEN);
+        return ApiResponse.failed(ApiError.FORBIDDEN, MY_FORBIDDEN_MESSAGE);
     }
 
     @GET
     @Path("failure/not-found")
     public ApiResponse<MyDTO> respondNotFound() {
-        return ApiResponse.failed(ApiError.NOT_FOUND);
+        return ApiResponse.failed(ApiError.NOT_FOUND, MY_NOT_FOUND_MESSAGE);
     }
 
     @GET
     @Path("failure/unauthorized")
     public ApiResponse<MyDTO> respondUnauthorized() {
-        return ApiResponse.failed(ApiError.UNAUTHORIZED);
+        return ApiResponse.failed(ApiError.UNAUTHORIZED, MY_UNAUTHORIZED_MESSAGE);
     }
 
     @GET
     @Path("failure/validation-error")
-    public ApiResponse<MyDTO> respondBadRequestWithMessage() {
-        return ApiResponse.failed(new ApiError(ApiError.BAD_REQUEST, "Validation failed", validationErrors));
+    public ApiResponse<MyDTO> respondValidationError() {
+        return ApiResponse.failed(MY_VALIDATION_ERRORS);
+    }
+
+    @GET
+    @Path("failure/validation-error-with-custom-message")
+    public ApiResponse<MyDTO> respondValidationErrorWithCustomMessage() {
+        return ApiResponse.failed(new ApiError(ApiError.VALIDATION_ERROR, MY_VALIDATION_ERROR_MESSAGE, MY_VALIDATION_ERRORS));
     }
 
     @GET
     @Path("failure/ise")
-    public ApiResponse<MyDTO> responseISE() {
-        return ApiResponse.failed(ApiError.SERVER_ERROR);
+    public ApiResponse<MyDTO> respondISE() {
+        return ApiResponse.failed(ApiError.SERVER_ERROR, MY_ISE_MESSAGE);
     }
 
     // THROW
@@ -92,49 +113,49 @@ public class MyResource {
     @GET
     @Path("throw/bad-request")
     public ApiResponse<MyDTO> throwBadRequest() {
-        throw new BadRequestException("That didn't make sense");
+        throw new BadRequestException(MY_BAD_REQUEST_MESSAGE);
     }
 
     @GET
     @Path("throw/conflict")
     public ApiResponse<MyDTO> throwConflict() {
-        throw new WebApplicationException("OMG CONFLICT!", Response.Status.CONFLICT);
+        throw new WebApplicationException(MY_CONFLICT_MESSAGE, Response.Status.CONFLICT);
     }
 
     @GET
     @Path("throw/forbidden")
     public ApiResponse<MyDTO> throwForbidden() {
-        throw new ForbiddenException("You can't have that");
+        throw new ForbiddenException(MY_FORBIDDEN_MESSAGE);
     }
 
     @GET
     @Path("throw/not-found")
     public ApiResponse<MyDTO> throwNotFound() {
-        throw new NotFoundException("I didn't find it");
+        throw new NotFoundException(MY_NOT_FOUND_MESSAGE);
     }
 
     @GET
     @Path("throw/unauthroized")
     public ApiResponse<MyDTO> throwUnauthorized() {
-        throw new WebApplicationException("Who are you?", Response.Status.UNAUTHORIZED);
+        throw new WebApplicationException(MY_UNAUTHORIZED_MESSAGE, Response.Status.UNAUTHORIZED);
     }
 
     @GET
     @Path("throw/validation-error")
     public ApiResponse<MyDTO> throwValidationError() {
-        throw new BadRequestException("One of your things has the wrong thing:\n\n" + StringUtils.join(validationErrors.stream().map(ValidationError::getMessage), "\n"));
+        throw new MyValidationException(MY_VALIDATION_ERRORS);
     }
 
     @GET
     @Path("throw/ise")
     public ApiResponse<MyDTO> throwISE() {
-        throw new InternalServerErrorException("EXPLODE!");
+        throw new InternalServerErrorException(MY_ISE_MESSAGE);
     }
 
     @GET
     @Path("throw/wae")
     public ApiResponse<MyDTO> throwWAE() {
-        throw new WebApplicationException("EXPLODE!");
+        throw new WebApplicationException(MY_WAE_MESSAGE);
     }
 
     // BREAK

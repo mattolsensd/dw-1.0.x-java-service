@@ -11,27 +11,10 @@
     <properties>
         <jackson.version>2.7.6</jackson.version>
         <porch.commons.version>2.1537.0</porch.commons.version>
-        <porch.dropwizard.version>0.1.136</porch.dropwizard.version>
+        <porch.dropwizard.version>1.390.988a7e6c</porch.dropwizard.version>
     </properties>
 
     <dependencies>
-
-        <!-- Jackson -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
 
         <!-- Guava -->
         <dependency>
@@ -45,6 +28,12 @@
             <groupId>com.porch.commons</groupId>
             <artifactId>porch-commons-api-response</artifactId>
             <version>${porch.commons.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.porch.commons</groupId>
@@ -109,6 +98,14 @@
             <groupId>com.porch</groupId>
             <artifactId>dropwizard-1.0.x-validation</artifactId>
             <version>${porch.dropwizard.version}</version>
+        </dependency>
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>com.porch</groupId>
+            <artifactId>dropwizard-1.0.x-testing</artifactId>
+            <version>${porch.dropwizard.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>

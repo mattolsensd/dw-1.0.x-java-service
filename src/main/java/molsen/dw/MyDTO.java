@@ -1,11 +1,13 @@
 package molsen.dw;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class MyDTO {
 
     private final Long id;
     private final String name;
 
-    public MyDTO(Long id, String name) {
+    public MyDTO(@JsonProperty("id") Long id, @JsonProperty("name") String name) {
         this.id = id;
         this.name = name;
     }
