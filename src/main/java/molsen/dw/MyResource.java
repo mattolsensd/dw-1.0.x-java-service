@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.porch.commons.response.ApiError;
 import com.porch.commons.response.ApiResponse;
 import com.porch.commons.response.ValidationError;
-import org.apache.commons.lang3.StringUtils;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
@@ -35,6 +34,8 @@ public class MyResource {
     public static final String MY_UNAUTHORIZED_MESSAGE = "Similar to 403 Forbidden, but specifically for use when authentication is required and has failed or has not yet been provided.";
     public static final String MY_ISE_MESSAGE = "A generic error message, given when an unexpected condition was encountered and no more specific message is suitable.";
     public static final String MY_WAE_MESSAGE = "Throwing a WebApplicationException will also result in a server error response";
+
+    public static final String LOGGING_EXCEPTION_MAPPER_MESSAGE = "There was an error processing your request. It has been logged";
 
     // Validation Errors are a special form of badRequest response
     public static final String MY_VALIDATION_ERROR_MESSAGE = "Request validation failed";

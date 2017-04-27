@@ -70,7 +70,7 @@ public class MyClient extends PorchJerseyClient {
         return getAsync(webTarget, API_RESPONSE_OF_MY_DTO);
     }
 
-    public Future<ApiResponse<MyDTO>> responseISE() {
+    public Future<ApiResponse<MyDTO>> respondISE() {
         WebTarget webTarget = getWebTarget().path("failure/ise");
         return getAsync(webTarget, API_RESPONSE_OF_MY_DTO);
     }

@@ -149,6 +149,7 @@ public class MyClientTest {
         final ApiError e = response.getError().get();
         assertEquals(ApiError.VALIDATION_ERROR, e.getCode());
         assertEquals("", e.getMessage());
+        // TODO: Verify validation errors
     }
 
     @Test
@@ -161,11 +162,12 @@ public class MyClientTest {
         final ApiError e = response.getError().get();
         assertEquals(ApiError.VALIDATION_ERROR, e.getCode());
         assertEquals(MyResource.MY_VALIDATION_ERROR_MESSAGE, e.getMessage());
+        // TODO: Verify validation errors
     }
 
     @Test
     public void shouldReturnServerError() throws Exception {
-        final ApiResponse<MyDTO> response = MyClientProvider.get().responseISE().get();
+        final ApiResponse<MyDTO> response = MyClientProvider.get().respondISE().get();
 
         assertNotNull(response);
         assertTrue(!response.isSuccess());
@@ -224,7 +226,7 @@ public class MyClientTest {
         assertTrue(response.getError().isPresent());
         final ApiError e = response.getError().get();
         assertEquals(ApiError.SERVER_ERROR, e.getCode());
-        assertTrue(e.getMessage().contains("There was an error processing your request. It has been logged"));
+        assertTrue(e.getMessage().contains(MyResource.LOGGING_EXCEPTION_MAPPER_MESSAGE));
     }
 
 }
