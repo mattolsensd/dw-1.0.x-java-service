@@ -8,6 +8,7 @@ import io.dropwizard.client.JerseyClientConfiguration;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.net.URI;
 
 @ConfigPath("dw-1.0.x-java-service")
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -17,5 +18,10 @@ public class MyConfig extends Configuration {
     @NotNull
     @JsonProperty("jerseyClient")
     JerseyClientConfiguration jerseyClient;
+
+    @Valid
+    @NotNull
+    @JsonProperty("partnerDataUrl")
+    URI partnerDataUrl;
 
 }

@@ -4,6 +4,9 @@ import com.google.common.collect.Lists;
 import com.porch.commons.response.ApiError;
 import com.porch.commons.response.ApiResponse;
 import com.porch.commons.response.ValidationError;
+import com.porch.partner.PartnerDTO;
+import com.porch.partner.auth.Secure;
+import com.porch.partner.auth.SecurePartnerDTO;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
@@ -44,6 +47,12 @@ public class MyResource {
             new ValidationError("id", "id is required"),
             new ValidationError("name", "That's a crap name")
     );
+
+    @GET
+    @Path("auth")
+    public ApiResponse<SecurePartnerDTO> auth(@Secure SecurePartnerDTO partner) {
+        return ApiResponse.ok(partner);
+    }
 
     // SUCCEED
 
