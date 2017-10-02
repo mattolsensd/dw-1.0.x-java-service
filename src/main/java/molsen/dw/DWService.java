@@ -4,8 +4,14 @@ import com.porch.dropwizard.configuration.modular.ModularConfigurationSourceProv
 import com.porch.dropwizard.configuration.modular.lua.LuaConfigurationGenerator;
 import com.porch.dropwizard.core.bundle.DefaultExceptionMappingBundle;
 import io.dropwizard.Application;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import molsen.dw.auth.BasicAuthenticator;
+import molsen.dw.auth.BasicAuthorizer;
+import molsen.dw.auth.BasicUser;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 
 public class DWService extends Application<MyConfig> {
@@ -28,9 +34,16 @@ public class DWService extends Application<MyConfig> {
     }
 
     public void run(MyConfig config, Environment env) throws Exception {
-
-        //Client jerseyClient = new JerseyClientBuilder(env).using(config.jerseyClient).build(getName());
-
         env.jersey().register(new MyResource());
+        env.jersey().register(new BasicAuthTestResource());
+
+        env.jersey().register(new AuthDynamicFeature(
+                new BasicCredentialAuthFilter.Builder<BasicUser>()
+                        .setAuthenticator(new BasicAuthenticator())
+                        .setAuthorizer(new BasicAuthorizer())
+                        .setRealm("DW Test Java Service")
+                        .buildAuthFilter()));
+
+        env.jersey().register(RolesAllowedDynamicFeature.class);
     }
 }
