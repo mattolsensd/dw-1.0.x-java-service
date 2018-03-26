@@ -39,7 +39,7 @@ public class MyClientTest {
 
     @ClassRule
     public static final DropwizardClientRule dropwizard = new DropwizardClientRule(
-            new MyResource(),
+            new MyResource(null),
             // Set up exception mapping to match the real service
             ConstraintViolationExceptionMapper.class,
             EarlyEofExceptionMapper.class,

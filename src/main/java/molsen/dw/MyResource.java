@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.porch.commons.response.ApiError;
 import com.porch.commons.response.ApiResponse;
 import com.porch.commons.response.ValidationError;
+import com.porch.partner.PartnerDTO;
+import com.porch.partner.client.PartnerDataClient;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
@@ -44,6 +46,22 @@ public class MyResource {
             new ValidationError("id", "id is required"),
             new ValidationError("name", "That's a crap name")
     );
+
+    private final PartnerDataClient partnerDataClient;
+
+    public MyResource(PartnerDataClient partnerDataClient) {
+        this.partnerDataClient = partnerDataClient;
+    }
+
+    @GET
+    @Path("pdc")
+    public ApiResponse<String> pdc() {
+        final ApiResponse<PartnerDTO> partnerWalmart = partnerDataClient.getPartnerByCode("WAYFAIR");
+        System.out.println(partnerWalmart.getBody().get().acquisitionSourceKeys());
+        System.out.println(partnerWalmart.getBody().get().acquisitionSourceKeys().getClass());
+        System.out.println(partnerWalmart.getBody().get().acquisitionSourceKeys().head().getClass());
+        return ApiResponse.ok(partnerWalmart.toString());
+    }
 
     // SUCCEED
 

@@ -19,7 +19,7 @@ public class MyResourceTest {
 
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
-            .addResource(new MyResource())
+            .addResource(new MyResource(null))
             // Set up exception mapping to match the real service
             .setRegisterDefaultExceptionMappers(false)
             .addProvider(new LoggingExceptionMapper())
